@@ -1,0 +1,22 @@
+version: "3.4"
+
+services:
+  db:
+    image: postgres:10.1-alpine
+    command:
+      ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+    container_name: adhouse-db
+    hostname: db
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+      - ./files/data/db:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_USER=admin123
+      - POSTGRES_PASSWORD=admin123
+      - POSTGRES_DB=adhouse_sample
+
+volumes:
+  dbdata:

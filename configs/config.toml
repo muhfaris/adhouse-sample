@@ -1,0 +1,15 @@
+[app]
+    name = ""
+    port = 9999
+
+    [app.http]
+        read_timeout = 15
+
+[persistence]
+    [persistence.database]
+        name     = "adhouse_sample"
+        host     = "localhost"
+        port     = 5432
+        username = "admin123"
+        password = "admin123"
+        ssl_mode = "disable"
