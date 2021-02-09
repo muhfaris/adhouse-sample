@@ -31,18 +31,17 @@ func NewProductHandler(db *sql.DB, logger *logrus.Logger) *productHandler {
 // GetProductByID is wrap Login handler
 func (ph *productHandler) GetProductByID(w http.ResponseWriter, r *http.Request) response.Response {
 	ctx := r.Context()
-	paramQuery := r.URL.Query() // id=[1,2,3,"]
+	paramQuery := r.URL.Query() // id=[1,2,3,"]&name=pc
 
 	var product structures.ProductRead
 	err := ph.decoder.Decode(&product, paramQuery)
-	log.Println(err)
 	if err != nil {
 		return response.Response{StatusCode: http.StatusNotAcceptable, Error: err, Message: err.Error()}
 	}
 
-	resp, err := ph.service.GetProductDetailByID(ctx, product.ID)
+	resp, err := ph.service.GetProductDetailByID(ctx, product)
 	if err != nil {
-		return response.Response{StatusCode: http.StatusNotAcceptable, Error: err, Message: err.Error()}
+		return response.Response{StatusCode: http.StatusBadRequest, Error: err, Message: err.Error()}
 	}
 
 	return response.Response{Data: resp, StatusCode: http.StatusOK}

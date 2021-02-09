@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/muhfaris/adhouse-sample/product/domain"
 	"github.com/muhfaris/adhouse-sample/product/repository"
@@ -22,10 +23,22 @@ func NewProductQueryInPSQl(db *sql.DB) repository.ProductQuery {
 // Login is check username and password
 // sebaiknya password di rubah dengan hash  bcrypt, sha256 dll, jgn menggunakan md5.
 // data (username, password) hanya sebagai contoh
-func (q *ProductQueryInPSQL) GetProductByID(ctx context.Context, IDs []int) <-chan repository.QueryResult {
+func (q *ProductQueryInPSQL) GetProductByID(ctx context.Context, IDs []int, name string) <-chan repository.QueryResult {
 	result := make(chan repository.QueryResult)
 
-	conditionQuery := convertPlaceholderInt(IDs)
+	var conditions []string
+	var counter int = 1
+	if len(IDs) > 1 {
+		conditions = append(conditions, fmt.Sprintf("id in (%s)", convertPlaceholderInt(IDs)))
+	}
+
+	if name != "" {
+		conditions = append(conditions, fmt.Sprintf("name LIKE '%%%s%%'", name))
+		counter++
+	}
+
+	where := strings.Join(conditions, " OR ")
+
 	go func() {
 		query := fmt.Sprintf(`
 		SELECT
@@ -35,7 +48,7 @@ func (q *ProductQueryInPSQL) GetProductByID(ctx context.Context, IDs []int) <-ch
 		FROM
 			products
 		WHERE
-			id in %s`, conditionQuery)
+			%s`, where)
 
 		rows, err := q.Conn.QueryContext(ctx, query)
 		if err != nil {
