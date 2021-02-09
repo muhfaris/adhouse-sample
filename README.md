@@ -70,13 +70,32 @@
     - structures adalah file untuk menerima data dari frontend.
 
 ### How To Run
-- Jalankan docker-compose
-``` docker-compose up -d ```
-
+- Jalankan docker-compose ``` docker-compose up -d ```
 - Jalankan golang, `go run main.go`
+
 Default Aplikasi  akan jalan di port localhost:9999
 
 ### Default User
 username     : admin01
 password     : admin01
 Login API    : http://localhost:9999/api/login (POST)
+
+### API
+#### Login
+POST http://localhost:9999/api/v1/login
+
+Body Data :
+```
+{
+    "username":"admin01",
+    "password":"admin01"
+}
+```
+
+#### Filter Product
+GET http://localhost:9999/api/v1/products
+
+| Params   |      Value    |
+|----------|--------------:|
+| name |  string |
+| id |    array of integer   |
